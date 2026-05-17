@@ -31,17 +31,17 @@ export default function SettingsPage() {
   const { data: user, isLoading } = useSWR("currentUser", syncUser);
 
   const [activeTab, setActiveTab] = useState<TabKey>("general");
+  const [prevUser, setPrevUser] = useState(user);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-    }
-  }, [user]);
+  if (user && user !== prevUser) {
+    setPrevUser(user);
+    setName(user.name || "");
+    setEmail(user.email || "");
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

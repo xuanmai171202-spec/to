@@ -87,15 +87,17 @@ export default function TaskDetailModal({
   onChange: (patch: TaskPatch) => void;
   onDelete: () => void;
 }) {
+  const [prevTask, setPrevTask] = useState(task);
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? '');
   const titleRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
+  if (task.id !== prevTask.id || task.title !== prevTask.title || task.description !== prevTask.description) {
+    setPrevTask(task);
     setTitle(task.title);
     setDescription(task.description ?? '');
-  }, [task.id, task.title, task.description]);
+  }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
