@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import useSWR from "swr";
+import { ChevronRight, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { syncUser } from "@/app/actions/userActions";
+import { logout } from "@/app/actions/authActions";
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }: { isOpen?: boolean, onClose?: () => void }) {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const pathname = usePathname();
+  const { data: user } = useSWR("currentUser", syncUser);
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path> },
@@ -16,75 +19,92 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }: { isOpen
     { name: "Users", href: "/dashboard/users", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 01-12 0v1zm0-11a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z"></path> },
   ];
 
+  const displayName = user?.name || user?.email?.split("@")[0] || "Guest";
+  const initial = (displayName || "?").charAt(0).toUpperCase();
+
   return (
-    <aside className={`sidebar-glass w-64 flex-shrink-0 flex flex-col fixed md:relative z-50 h-full transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden">
-                    <Image src="/windtodo.png" alt="WindTodo" width={40} height={40} className="w-full h-full object-contain" />
+    <aside className={`w-72 p-4 md:p-6 flex-shrink-0 flex flex-col fixed md:relative z-50 h-full transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+        <div className="glass h-full rounded-[2.5rem] flex flex-col p-6 border-white/40 shadow-xl shadow-sky-dark/10">
+            <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 overflow-hidden">
+                        <Image src="/windtodo.png" alt="WindTodo" width={40} height={40} className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight text-foreground">WindTodo</span>
                 </div>
-                <span className="text-xl font-bold tracking-tight text-white">WindTodo</span>
+                <button className="md:hidden text-muted-foreground hover:text-foreground" onClick={onClose}>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <button className="md:hidden text-gray-400 hover:text-white" onClick={onClose}>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        
-        <nav className="space-y-1 p-6">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link 
-                  key={item.name}
-                  href={item.href} 
+
+            <nav className="space-y-1 mb-8">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3 px-4">Menu</p>
+                {navItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={onClose}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group ${
+                        isActive
+                          ? "bg-white/60 shadow-sm text-primary font-bold"
+                          : "text-muted-foreground hover:bg-white/30 hover:text-foreground"
+                      }`}
+                    >
+                        <svg className={`w-5 h-5 ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {item.icon}
+                        </svg>
+                        <span className="text-sm font-medium">{item.name}</span>
+                        {isActive && <ChevronRight size={14} className="ml-auto opacity-50" />}
+                    </Link>
+                  );
+                })}
+
+                <Link
+                  href="/dashboard/settings"
                   onClick={onClose}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive 
-                      ? "bg-white/5 text-white" 
-                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group ${
+                    pathname === "/dashboard/settings"
+                      ? "bg-white/60 shadow-sm text-primary font-bold"
+                      : "text-muted-foreground hover:bg-white/30 hover:text-foreground"
                   }`}
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {item.icon}
-                    </svg>
-                    <span>{item.name}</span>
+                    <SettingsIcon size={18} className={pathname === "/dashboard/settings" ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} />
+                    <span className="text-sm font-medium">Settings</span>
+                    {pathname === "/dashboard/settings" && <ChevronRight size={14} className="ml-auto opacity-50" />}
                 </Link>
-              );
-            })}
-        </nav>
-        
-        <div className="mt-auto p-6 relative">
-            {isSettingsOpen && (
-                <div className="absolute bottom-full left-6 right-6 mb-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-lg overflow-hidden glass z-50">
-                    <div className="py-1">
-                        <Link href="#" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition-colors">Profile</Link>
-                        <Link href="#" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition-colors">Account Settings</Link>
-                        <Link href="#" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition-colors">Preferences</Link>
-                        <div className="border-t border-white/10 my-1"></div>
-                        <Link href="/login" className="block px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors">Logout</Link>
+            </nav>
+
+            <div className="mt-auto pt-6 border-t border-white/20 space-y-3">
+                <div className="glass rounded-2xl p-4 flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 border border-white/60 overflow-hidden relative flex items-center justify-center text-primary font-bold text-sm">
+                        {user?.avatarUrl ? (
+                          <Image
+                            src={user.avatarUrl}
+                            alt={displayName}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span>{initial}</span>
+                        )}
+                    </div>
+                    <div className="flex-grow min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">{displayName}</p>
                     </div>
                 </div>
-            )}
-            <div 
-              className="glass rounded-xl p-4 flex items-center space-x-3 cursor-pointer hover:bg-white/5 transition-colors"
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-            >
-                <div className="w-10 h-10 rounded-full bg-gray-600 border border-white/10 overflow-hidden relative">
-                    <Image 
-                      src="https://ui-avatars.com/api/?name=Tony+Stark&background=333&color=fff" 
-                      alt="User" 
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                </div>
-                <div className="flex-grow min-w-0">
-                    <p className="text-sm font-medium text-white truncate">Tony Stark</p>
-                    <p className="text-xs text-gray-500 truncate">Pro Member</p>
-                </div>
-                <button className="text-gray-500 hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); setIsSettingsOpen(!isSettingsOpen); }}>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
-                </button>
+
+                <form action={logout}>
+                    <button
+                      type="submit"
+                      className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-all group"
+                    >
+                        <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
+                        <span className="text-sm font-bold">Sign Out</span>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>

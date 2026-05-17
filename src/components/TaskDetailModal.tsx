@@ -129,12 +129,12 @@ export default function TaskDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex items-start justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-[300] flex items-start justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto animate-bubble-fade"
       onPointerDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-4xl my-12 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="w-full max-w-4xl my-12 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-bubble-pop">
         {/* Header */}
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-white/5">
           <div className="flex-1 min-w-0">

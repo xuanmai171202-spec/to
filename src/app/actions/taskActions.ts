@@ -84,6 +84,54 @@ export async function getTasks(listId: string) {
   })
 }
 
+// Quick-task helper for the dashboard: drops a new task into the project's
+// "todo" board list (first list named like to-do/todo, falling back to the
+// list at position 0) and assigns it to the current user.
+export async function createMyTaskInProject(title: string, projectId: string) {
+  const userId = await requireUserId()
+
+  const lists = await prisma.boardList.findMany({
+    where: {
+      projectId,
+      project: {
+        OR: [
+          { userId },
+          { members: { some: { id: userId } } },
+        ],
+      },
+    },
+    orderBy: { position: 'asc' },
+    select: { id: true, name: true, position: true },
+  })
+
+  if (lists.length === 0) {
+    throw new Error('Project has no board lists')
+  }
+
+  const todoList =
+    lists.find((l) => /^to[- ]?do$/i.test(l.name.trim())) ?? lists[0]
+
+  const last = await prisma.task.findFirst({
+    where: { listId: todoList.id },
+    orderBy: { position: 'desc' },
+    select: { position: true },
+  })
+
+  const task = await prisma.task.create({
+    data: {
+      title,
+      userId,
+      listId: todoList.id,
+      assigneeId: userId,
+      position: (last?.position ?? -1) + 1,
+    },
+    include: TASK_INCLUDE,
+  })
+
+  revalidatePath('/')
+  return task
+}
+
 export async function createTask(title: string, listId: string, assigneeId?: string) {
   const userId = await requireUserId()
 

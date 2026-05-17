@@ -55,13 +55,13 @@ export default function AddProjectModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-bubble-fade"
       onClick={onClose}
     >
       <form
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className="glass rounded-2xl w-full max-w-md p-6"
+        className="glass rounded-2xl w-full max-w-md p-6 animate-bubble-pop"
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white tracking-tight">{title}</h2>
