@@ -52,11 +52,11 @@ interface TooltipPayload {
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipPayload[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#111] border border-white/10 rounded-xl p-3 text-xs shadow-2xl">
-      <p className="text-white font-bold mb-1.5">{label}</p>
+    <div className="glass border border-white/40 rounded-xl p-3 text-xs shadow-xl shadow-sky-dark/10">
+      <p className="text-foreground font-bold mb-1.5">{label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.fill }} className="font-medium">
-          {p.name}: <span className="text-white">{p.value}</span>
+          {p.name}: <span className="text-foreground">{p.value}</span>
         </p>
       ))}
     </div>
@@ -70,7 +70,7 @@ function RingProgress({ pct, color, size = 80 }: { pct: number; color: string; s
   const offset = circ - (pct / 100) * circ;
   return (
     <svg width={size} height={size} className="-rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={r} strokeWidth={6} stroke="rgba(255,255,255,0.06)" fill="none" />
+      <circle cx={size / 2} cy={size / 2} r={r} strokeWidth={6} stroke="rgba(44,62,80,0.08)" fill="none" />
       <circle
         cx={size / 2} cy={size / 2} r={r} strokeWidth={6}
         stroke={color} fill="none"
@@ -101,15 +101,15 @@ function MemberCard({ u, rank, totalProjectTasks }: { u: MemberStats; rank: numb
   const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : null;
 
   return (
-    <div className="glass rounded-2xl p-5 border border-white/5 flex flex-col gap-4 hover:border-white/15 transition-all duration-300 hover:bg-white/[0.03]">
+    <div className="glass rounded-2xl p-5 border border-white/40 flex flex-col gap-4 hover:bg-white/60 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="relative flex-shrink-0">
           {u.avatarUrl ? (
-            <img src={u.avatarUrl} alt={u.name} className="w-11 h-11 rounded-full object-cover border-2 border-white/10" />
+            <img src={u.avatarUrl} alt={u.name} className="w-11 h-11 rounded-full object-cover border-2 border-white/60" />
           ) : (
             <div
-              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold text-white border-2 border-white/10"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold text-foreground border-2 border-white/60"
               style={{ background: avatarBg }}
             >
               {u.name.charAt(0).toUpperCase()}
@@ -118,22 +118,22 @@ function MemberCard({ u, rank, totalProjectTasks }: { u: MemberStats; rank: numb
           {medal && <span className="absolute -top-1 -right-1 text-sm leading-none">{medal}</span>}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-white truncate">{u.name}</p>
-          <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
+          <p className="text-sm font-bold text-foreground truncate">{u.name}</p>
+          <p className="text-[10px] text-muted-foreground truncate">{u.email}</p>
         </div>
 
         {/* Completion ring */}
         <div className="relative flex-shrink-0 flex items-center justify-center">
           <RingProgress pct={u.completionPct} color={STATUS_COLORS.done} size={52} />
-          <span className="absolute text-[10px] font-bold text-white rotate-90">{u.completionPct}%</span>
+          <span className="absolute text-[10px] font-bold text-foreground rotate-90">{u.completionPct}%</span>
         </div>
       </div>
 
       {/* Stats chips */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex flex-col items-center p-2 rounded-lg bg-zinc-800/50">
-          <span className="text-gray-500 text-[9px] font-bold uppercase tracking-wider mb-0.5">To Do</span>
-          <span className="text-white text-base font-bold">{u.todo}</span>
+        <div className="flex flex-col items-center p-2 rounded-lg bg-white/400 border border-white/60">
+          <span className="text-muted-foreground text-[9px] font-bold uppercase tracking-wider mb-0.5">To Do</span>
+          <span className="text-foreground text-base font-bold">{u.todo}</span>
         </div>
         <div className="flex flex-col items-center p-2 rounded-lg bg-blue-500/10">
           <span className="text-blue-400 text-[9px] font-bold uppercase tracking-wider mb-0.5">Active</span>
@@ -148,11 +148,11 @@ function MemberCard({ u, rank, totalProjectTasks }: { u: MemberStats; rank: numb
       {/* Multi-segment progress bar */}
       {u.total > 0 && (
         <div>
-          <div className="flex justify-between text-[10px] text-gray-500 mb-1.5">
+          <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
             <span>{u.total} tasks assigned</span>
-            <span className="text-white font-semibold">{u.contributionPct}% of project</span>
+            <span className="text-foreground font-semibold">{u.contributionPct}% of project</span>
           </div>
-          <div className="h-2 rounded-full overflow-hidden bg-white/5 flex gap-0.5">
+          <div className="h-2 rounded-full overflow-hidden bg-white/40 flex gap-0.5">
             {u.completed > 0 && (
               <div
                 className="h-full rounded-l-full bg-green-500 transition-all duration-700"
@@ -175,19 +175,19 @@ function MemberCard({ u, rank, totalProjectTasks }: { u: MemberStats; rank: numb
           <div className="flex gap-3 mt-1.5 text-[9px]">
             <span className="text-green-400">● Done {Math.round((u.completed / u.total) * 100)}%</span>
             <span className="text-blue-400">● Active {Math.round((u.inProgress / u.total) * 100)}%</span>
-            <span className="text-gray-500">● Todo {Math.round((u.todo / u.total) * 100)}%</span>
+            <span className="text-muted-foreground">● Todo {Math.round((u.todo / u.total) * 100)}%</span>
           </div>
         </div>
       )}
       {u.total === 0 && (
-        <p className="text-[11px] text-gray-600 italic text-center">No tasks assigned yet</p>
+        <p className="text-[11px] text-muted-foreground/70 italic text-center">No tasks assigned yet</p>
       )}
     </div>
   );
 }
 
 // ─── Main dashboard ─────────────────────────────────────────────────────────────
-export default function StatsDashboard() {
+export default function StatsDashboard({ minimal = false }: { minimal?: boolean } = {}) {
   const [isMounted, setIsMounted] = useState(false);
   const [overall, setOverall] = useState<OverallStats | null>(null);
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -200,6 +200,12 @@ export default function StatsDashboard() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     async function init() {
+      if (minimal) {
+        const overallData = await getOverallStats();
+        setOverall(overallData);
+        setLoading(false);
+        return;
+      }
       const [overallData, projectsData] = await Promise.all([
         getOverallStats(),
         getProjects()
@@ -210,22 +216,22 @@ export default function StatsDashboard() {
       setLoading(false);
     }
     init();
-  }, []);
+  }, [minimal]);
 
   useEffect(() => {
-    if (!selectedProjectId) return;
+    if (minimal || !selectedProjectId) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingProject(true);
     getProjectStats(selectedProjectId).then(data => {
       setProjectStats(data);
       setLoadingProject(false);
     });
-  }, [selectedProjectId]);
+  }, [selectedProjectId, minimal]);
 
   if (!isMounted || loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white" />
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary" />
       </div>
     );
   }
@@ -248,6 +254,55 @@ export default function StatsDashboard() {
 
   const barData = projectStats?.userStats?.filter((u: MemberStats) => u.total > 0) ?? [];
 
+  if (minimal) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
+        <StatCard
+          title="Projects"
+          value={overall?.totalProjects ?? 0}
+          icon={<Layers className="w-5 h-5" />}
+          accent="white"
+        />
+
+        <GlassCard className="lg:col-span-2 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Overall Tasks</h3>
+            <PieChartIcon className="w-4 h-4 text-muted-foreground/70" />
+          </div>
+          {overall && overall.totalTasks > 0 ? (
+            <div className="flex items-center gap-4 flex-1">
+              <div className="relative w-28 h-28 flex-shrink-0">
+                <PieChart width={112} height={112}>
+                  <Pie data={pieData} innerRadius={38} outerRadius={52} dataKey="value" paddingAngle={3}>
+                    {pieData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                  <span className="text-xl font-black text-foreground">{overallPct}%</span>
+                  <span className="text-[9px] text-muted-foreground uppercase">done</span>
+                </div>
+              </div>
+              <div className="space-y-2 flex-1">
+                {pieData.map(d => (
+                  <div key={d.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: d.fill }} />
+                      <span className="text-[11px] text-muted-foreground">{d.name}</span>
+                    </div>
+                    <span className="text-sm font-bold text-foreground">{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground/70 text-sm italic">No tasks yet</div>
+          )}
+        </GlassCard>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
 
@@ -265,8 +320,8 @@ export default function StatsDashboard() {
         {/* Overall status donut */}
         <GlassCard className="flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Overall Tasks</h3>
-            <PieChartIcon className="w-4 h-4 text-gray-600" />
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Overall Tasks</h3>
+            <PieChartIcon className="w-4 h-4 text-muted-foreground/70" />
           </div>
           {overall && overall.totalTasks > 0 ? (
             <div className="flex items-center gap-4 flex-1">
@@ -278,8 +333,8 @@ export default function StatsDashboard() {
                   <Tooltip content={<CustomTooltip />} />
                 </PieChart>
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
-                  <span className="text-xl font-black text-white">{overallPct}%</span>
-                  <span className="text-[9px] text-gray-500 uppercase">done</span>
+                  <span className="text-xl font-black text-foreground">{overallPct}%</span>
+                  <span className="text-[9px] text-muted-foreground uppercase">done</span>
                 </div>
               </div>
               <div className="space-y-2 flex-1">
@@ -287,15 +342,15 @@ export default function StatsDashboard() {
                   <div key={d.name} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full" style={{ background: d.fill }} />
-                      <span className="text-[11px] text-gray-400">{d.name}</span>
+                      <span className="text-[11px] text-muted-foreground">{d.name}</span>
                     </div>
-                    <span className="text-sm font-bold text-white">{d.value}</span>
+                    <span className="text-sm font-bold text-foreground">{d.value}</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-600 text-sm italic">No tasks yet</div>
+            <div className="flex-1 flex items-center justify-center text-muted-foreground/70 text-sm italic">No tasks yet</div>
           )}
         </GlassCard>
 
@@ -303,21 +358,21 @@ export default function StatsDashboard() {
         <GlassCard className="lg:col-span-2 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Project Breakdown</h3>
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Project Breakdown</h3>
               <select
                 value={selectedProjectId}
                 onChange={e => setSelectedProjectId(e.target.value)}
-                className="bg-black/50 border border-white/10 rounded-lg text-xs py-1 px-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="bg-white/60 border border-white/60 rounded-lg text-xs py-1 px-2 text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
-            <Target className="w-4 h-4 text-gray-600" />
+            <Target className="w-4 h-4 text-muted-foreground/70" />
           </div>
 
           {loadingProject ? (
             <div className="flex-1 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-white/30" />
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary/60" />
             </div>
           ) : projectStats ? (
             <div className="flex items-center gap-6 flex-1">
@@ -330,10 +385,10 @@ export default function StatsDashboard() {
                   <Tooltip content={<CustomTooltip />} />
                 </PieChart>
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
-                  <span className="text-2xl font-black text-white">
+                  <span className="text-2xl font-black text-foreground">
                     {projectStats.totalTasks > 0 ? Math.round((projectStats.completedTasks / projectStats.totalTasks) * 100) : 0}%
                   </span>
-                  <span className="text-[9px] text-gray-500 uppercase">done</span>
+                  <span className="text-[9px] text-muted-foreground uppercase">done</span>
                 </div>
               </div>
 
@@ -347,7 +402,7 @@ export default function StatsDashboard() {
                   <div key={row.label} className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: row.color }} />
                     <div className="flex-1">
-                      <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-white/40 overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{
@@ -357,16 +412,16 @@ export default function StatsDashboard() {
                         />
                       </div>
                     </div>
-                    <span className="text-[11px] text-gray-400 w-16 text-right">
-                      {row.val} <span className="text-gray-600">
+                    <span className="text-[11px] text-muted-foreground w-16 text-right">
+                      {row.val} <span className="text-muted-foreground/70">
                         ({projectStats.totalTasks > 0 ? Math.round((row.val / projectStats.totalTasks) * 100) : 0}%)
                       </span>
                     </span>
                   </div>
                 ))}
-                <div className="pt-2 border-t border-white/5 flex justify-between text-[10px] text-gray-500">
-                  <span>Total tasks: <span className="text-white font-bold">{projectStats.totalTasks}</span></span>
-                  <span>Members: <span className="text-white font-bold">{projectStats.userStats.length}</span></span>
+                <div className="pt-2 border-t border-white/40 flex justify-between text-[10px] text-muted-foreground">
+                  <span>Total tasks: <span className="text-foreground font-bold">{projectStats.totalTasks}</span></span>
+                  <span>Members: <span className="text-foreground font-bold">{projectStats.userStats.length}</span></span>
                   {projectStats.unassignedCount > 0 && (
                     <span className="text-yellow-500/80">⚠ {projectStats.unassignedCount} unassigned</span>
                   )}
@@ -374,7 +429,7 @@ export default function StatsDashboard() {
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-600 text-sm italic">Select a project</div>
+            <div className="flex-1 flex items-center justify-center text-muted-foreground/70 text-sm italic">Select a project</div>
           )}
         </GlassCard>
       </div>
@@ -383,19 +438,19 @@ export default function StatsDashboard() {
       {barData.length > 0 && (
         <GlassCard>
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Task Distribution by Member</h3>
-            <BarChart2 className="w-4 h-4 text-gray-600" />
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Task Distribution by Member</h3>
+            <BarChart2 className="w-4 h-4 text-muted-foreground/70" />
           </div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 0, right: 8, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
-                <XAxis dataKey="name" stroke="#555" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#555" fontSize={10} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(44,62,80,0.08)" vertical={false} />
+                <XAxis dataKey="name" stroke="#546E7A" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#546E7A" fontSize={10} tickLine={false} axisLine={false} allowDecimals={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(44,62,80,0.04)' }} />
                 <Legend
                   iconType="circle" iconSize={8}
-                  wrapperStyle={{ fontSize: 11, color: '#888', paddingTop: 12 }}
+                  wrapperStyle={{ fontSize: 11, color: '#546E7A', paddingTop: 12 }}
                 />
                 <Bar dataKey="completed" stackId="a" fill={STATUS_COLORS.done}       name="Done"        radius={[0,0,0,0]} />
                 <Bar dataKey="inProgress" stackId="a" fill={STATUS_COLORS.inProgress} name="In Progress" radius={[0,0,0,0]} />
@@ -411,17 +466,17 @@ export default function StatsDashboard() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-white">Team Contributions</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Individual performance in <span className="text-white font-semibold">{projectStats.projectName}</span></p>
+              <h3 className="text-base font-bold text-foreground">Team Contributions</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Individual performance in <span className="text-foreground font-semibold">{projectStats.projectName}</span></p>
             </div>
             <Trophy className="w-5 h-5 text-yellow-500/60" />
           </div>
 
           {projectStats.userStats.length === 0 ? (
             <GlassCard className="text-center py-12">
-              <Users className="w-8 h-8 text-gray-700 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">No members in this project yet.</p>
-              <p className="text-gray-600 text-xs mt-1">Add members from the project board to track their contributions.</p>
+              <Users className="w-8 h-8 text-muted-foreground/60 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No members in this project yet.</p>
+              <p className="text-muted-foreground/70 text-xs mt-1">Add members from the project board to track their contributions.</p>
             </GlassCard>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -444,22 +499,22 @@ export default function StatsDashboard() {
 
 // ─── Stat Card ──────────────────────────────────────────────────────────────────
 const ACCENT: Record<string, string> = {
-  white: 'border-white/10',
-  gray:  'border-zinc-700/30',
-  blue:  'border-blue-500/20',
-  green: 'border-green-500/20',
+  white: 'border-white/60',
+  gray:  'border-white/60',
+  blue:  'border-blue-300/40',
+  green: 'border-green-300/40',
 };
 const ACCENT_BG: Record<string, string> = {
-  white: 'bg-white/5',
-  gray:  'bg-zinc-700/10',
-  blue:  'bg-blue-500/10',
-  green: 'bg-green-500/10',
+  white: 'bg-white/50',
+  gray:  'bg-white/40',
+  blue:  'bg-blue-100/60',
+  green: 'bg-green-100/60',
 };
 const ACCENT_ICON: Record<string, string> = {
-  white: 'text-gray-300',
-  gray:  'text-gray-500',
-  blue:  'text-blue-400',
-  green: 'text-green-400',
+  white: 'text-primary',
+  gray:  'text-muted-foreground',
+  blue:  'text-blue-500',
+  green: 'text-green-600',
 };
 
 function StatCard({
@@ -469,13 +524,13 @@ function StatCard({
 }) {
   return (
     <div className={`glass rounded-2xl p-5 border ${ACCENT[accent]} ${ACCENT_BG[accent]} flex items-center gap-4 group hover:scale-[1.02] transition-transform duration-300`}>
-      <div className={`p-3 rounded-xl bg-white/5 group-hover:bg-white/10 transition-colors ${ACCENT_ICON[accent]}`}>
+      <div className={`p-3 rounded-xl bg-white/70 group-hover:bg-white transition-colors ${ACCENT_ICON[accent]}`}>
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0.5">{title}</p>
-        <p className="text-2xl font-black text-white">{value}</p>
-        {sub && <p className="text-[10px] text-gray-600 mt-0.5">{sub}</p>}
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">{title}</p>
+        <p className="text-2xl font-black text-foreground">{value}</p>
+        {sub && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{sub}</p>}
       </div>
     </div>
   );

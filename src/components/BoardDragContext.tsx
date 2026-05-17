@@ -161,7 +161,7 @@ export function BoardDragProvider({
       {children}
       {drag && (
         <div
-          className="pointer-events-none fixed z-[200] bg-white/15 backdrop-blur border border-white/25 rounded-lg px-3 py-2 text-sm text-white shadow-2xl"
+          className="pointer-events-none fixed z-[200] bg-white/70 backdrop-blur border border-white/60 rounded-lg px-3 py-2 text-sm text-foreground shadow-xl shadow-sky-dark/10"
           style={{
             left: drag.pos.x - drag.pointerOffset.x,
             top: drag.pos.y - drag.pointerOffset.y,
