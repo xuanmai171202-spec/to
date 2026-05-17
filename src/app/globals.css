@@ -23,6 +23,7 @@
   --color-ring: #5D9CEC;
   --radius-xl: 28px;
   --radius-2xl: 36px;
+  --font-sans: var(--font-poppins), "Inter", sans-serif;
 }
 
 :root {
@@ -48,7 +49,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-poppins), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--foreground);
 }
 
